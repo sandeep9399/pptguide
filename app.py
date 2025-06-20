@@ -109,7 +109,7 @@ if uploaded_file:
 
     # Excel export
     towrite = io.BytesIO()
-    df.drop(columns=["Preview Image URL"]).to_excel(towrite, index=False, engine='openpyxl')
+    df.drop(columns=["Preview Image URL"]).to_excel(excel_writer=towrite, index=False, engine='openpyxl')
     towrite.seek(0)
 
     st.download_button(
@@ -118,4 +118,3 @@ if uploaded_file:
         file_name="Slide_Visual_Design_Guide.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-
