@@ -4,6 +4,7 @@
 import streamlit as st
 import pandas as pd
 from pptx import Presentation
+import io
 
 st.set_page_config(page_title="PPT Visual Guide Generator", layout="wide")
 st.title("🎯 Apollo PPT Visual Design Guide")
@@ -59,4 +60,15 @@ if uploaded_file:
     df = analyze_ppt(uploaded_file)
     st.success("✅ Analysis complete!")
     st.dataframe(df, use_container_width=True)
-    st.download_button("Download Excel", df.to_excel(index=False), file_name="Slide_Visual_Guidelines.xlsx")
+
+    towrite = io.BytesIO()
+    df.to_excel(towrite, index=False, engine='openpyxl')
+    towrite.seek(0)
+
+    st.download_button(
+        label="📥 Download Excel",
+        data=towrite,
+        file_name="Slide_Visual_Guidelines.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
