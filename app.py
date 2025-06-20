@@ -5,6 +5,7 @@ import streamlit as st
 import pandas as pd
 from pptx import Presentation
 import io
+import re
 
 st.set_page_config(page_title="PPT Visual Guide Generator", layout="wide")
 st.title("🎯 Apollo PPT Visual Design Guide")
@@ -12,13 +13,18 @@ st.markdown("Upload your PowerPoint presentation below. We'll analyze and genera
 
 uploaded_file = st.file_uploader("Upload your .pptx file", type=["pptx"])
 
+def clean_illegal_chars(text):
+    # Remove illegal Unicode characters that cannot be used in Excel
+    ILLEGAL_CHARACTERS_RE = re.compile(r"[\000-\010\013\014\016-\037]")
+    return ILLEGAL_CHARACTERS_RE.sub("", text)
+
 def analyze_ppt(ppt_file):
     prs = Presentation(ppt_file)
     data = []
 
     for i, slide in enumerate(prs.slides, start=1):
         block_texts = [
-            shape.text.strip() for shape in slide.shapes
+            clean_illegal_chars(shape.text.strip()) for shape in slide.shapes
             if shape.has_text_frame and shape.text.strip()
         ]
         full_text = " ".join(block_texts).lower()
@@ -71,4 +77,3 @@ if uploaded_file:
         file_name="Slide_Visual_Guidelines.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-
