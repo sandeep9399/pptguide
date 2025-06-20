@@ -77,7 +77,8 @@ def analyze_ppt(ppt_file):
             part = f"Part {idx+1}" if part_count == 2 else "Full Slide"
             design = suggest_design_elements(full_text)
 
-            preview_prompt_url = f"https://source.unsplash.com/800x400/?{urllib.parse.quote(design['Visual Prompt'])}"
+            search_term = design['Visual Prompt'].split(',')[0].split(' ')[:5]
+            preview_prompt_url = f"https://source.unsplash.com/800x400/?{urllib.parse.quote(' '.join(search_term))}"
 
             data.append({
                 "Slide Number": i,
@@ -105,7 +106,7 @@ if uploaded_file:
     st.markdown("### 🖼️ Visual Previews from Prompts")
     for _, row in df.iterrows():
         st.markdown(f"**Slide {row['Slide Number']} - {row['Slide Part']}**")
-        st.image(row["Preview Image URL"], caption=row["Visual Prompt"], use_column_width=True)
+        st.image(row["Preview Image URL"], caption=row["Visual Prompt"], use_container_width=True)
 
     # Excel export
     towrite = io.BytesIO()
